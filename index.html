@@ -142,9 +142,8 @@
             <!-- Executive summary content as provided -->
         </div>
         <script>
-            window.onload = function() {
-                const agiTokenAddress = '0xf0780F43b86c13B3d0681B1Cf6DaeB1499e7f14D';
-                const agiTokenAbi = [{
+            const agiTokenAddress = '0xf0780F43b86c13B3d0681B1Cf6DaeB1499e7f14D';
+            const agiTokenAbi = [{
                 "inputs": [],
                 "stateMutability": "nonpayable",
                 "type": "constructor"
@@ -822,8 +821,8 @@
                 "stateMutability": "nonpayable",
                 "type": "function"
             }]; // Add the ABI here
-                const contractAddress = '0x8BA2F2A37919548b8F3E62dcFBf11970431F1613';
-                const contractAbi = [{
+            const contractAddress = '0x8BA2F2A37919548b8F3E62dcFBf11970431F1613';
+            const contractAbi = [{
                 "inputs": [{
                     "internalType": "address",
                     "name": "wrapper",
@@ -1103,52 +1102,55 @@
                 "stateMutability": "view",
                 "type": "function"
             }]; // Add the ABI here
-                const parentNode = '0x39eb848f88bdfb0a6371096249dd451f56859dfe2cd3ddeab1e26d5bb68ede16';
-                const resolver = '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63';
-                const ensWrapperAddress = '0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401';
+            const parentNode = '0x39eb848f88bdfb0a6371096249dd451f56859dfe2cd3ddeab1e26d5bb68ede16';
+            const resolver = '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63';
+            const ensWrapperAddress = '0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401';
 
-                function validateLabel(label) {
-                    return /^[a-z0-9-]+$/.test(label);
+            function validateLabel(label) {
+                return /^[a-z0-9-]+$/.test(label);
+            }
+
+            async function registerLabel() {
+                if (!window.ethereum) {
+                    alert('MetaMask is required for registration.');
+                    return;
                 }
 
-                async function registerLabel() {
-                    if (!window.ethereum) {
-                        alert('MetaMask is required for registration.');
-                        return;
-                    }
-
-                    const label = document.getElementById('label').value.trim().toLowerCase();
-                    const newOwner = document.getElementById('newOwner').value.trim();
-                    if (!label || !newOwner || !validateLabel(label)) {
-                        alert('Please enter a valid label (lowercase letters, numbers, hyphens) and your Ethereum address.');
-                        return;
-                    }
-
-                    try {
-                        await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        const provider = new ethers.providers.Web3Provider(window.ethereum);
-                        const signer = provider.getSigner();
-                        const userAddress = await signer.getAddress();
-
-                        const agiTokenContract = new ethers.Contract(agiTokenAddress, agiTokenAbi, signer);
-                        const allowance = await agiTokenContract.allowance(userAddress, contractAddress);
-                        if (allowance.lt(ethers.utils.parseUnits("150", 18))) {
-                            const approvalTx = await agiTokenContract.approve(contractAddress, ethers.utils.parseUnits("150", 18));
-                            await approvalTx.wait();
-                            alert('AGI token approval successful. Please proceed with registration.');
-                        }
-
-                        const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-                        const txn = await contract.register(parentNode, label, newOwner, resolver, 0, []);
-                        const receipt = await txn.wait();
-
-                        const txLink = document.getElementById('txLink');
-                        txLink.innerHTML = `Registration successful! <a href="https://etherscan.io/tx/${receipt.transactionHash}" target="_blank">Etherscan</a>`;
-                    } catch (error) {
-                        console.error(error);
-                        alert('An error occurred during registration.');
-                    }
+                const label = document.getElementById('label').value.trim().toLowerCase();
+                const newOwner = document.getElementById('newOwner').value.trim();
+                if (!label || !newOwner || !validateLabel(label)) {
+                    alert('Please enter a valid label (lowercase letters, numbers, hyphens) and your Ethereum address.');
+                    return;
                 }
+
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const signer = provider.getSigner();
+                    const userAddress = await signer.getAddress();
+
+                    const agiTokenContract = new ethers.Contract(agiTokenAddress, agiTokenAbi, signer);
+                    const allowance = await agiTokenContract.allowance(userAddress, contractAddress);
+                    if (allowance.lt(ethers.utils.parseUnits("150", 18))) {
+                        const approvalTx = await agiTokenContract.approve(contractAddress, ethers.utils.parseUnits("150", 18));
+                        await approvalTx.wait();
+                        alert('AGI token approval successful. Please proceed with registration.');
+                    }
+
+                    const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+                    const txn = await contract.register(parentNode, label, newOwner, resolver, 0, []);
+                    const receipt = await txn.wait();
+
+                    const txLink = document.getElementById('txLink');
+                    txLink.innerHTML = `Registration successful! <a href="https://etherscan.io/tx/${receipt.transactionHash}" target="_blank">Etherscan</a>`;
+                } catch (error) {
+                    console.error(error);
+                    alert('An error occurred during registration.');
+                }
+            }
+
+            window.onload = function() {
+                // Additional onload actions can be placed here
             };
         </script>
     </body>
