@@ -103,7 +103,7 @@
                 <ol>
                     <li>
                         <strong>Identity:</strong>
-                        Choose a unique name for your Emperor CLUB Lifetime Membership NFT. This will be your identity in the Emperor Club ecosystem. An identity like 'Martin' will translate to <strong>Martin.Emperor.Club.Agi.Eth</strong>
+                        Choose a unique name for your Emperor CLUB Lifetime Membership NFT. This will be your identity in the Emperor Club ecosystem. An identity like 'bob' will translate to <strong>bob.Emperor.Club.Agi.Eth</strong>
                         in the Emperor Club universe. Use lowercase letters, numbers, and hyphens only.
                     </li>
                     <li>
@@ -123,7 +123,7 @@
                     <strong>Pre-Alpha Version</strong>
                 </p>
             </div>
-            <input type="text" id="label" placeholder="Label (e.g., 'alice')">
+            <input type="text" id="label" placeholder="Label (e.g., 'bob')">
             <input type="text" id="newOwner" placeholder="Your Ethereum Address">
             <button onclick="registerLabel()">Register</button>
             <div class="tx-link" id="txLink"></div>
@@ -142,8 +142,9 @@
             <!-- Executive summary content as provided -->
         </div>
         <script>
-            const agiTokenAddress = '0xf0780F43b86c13B3d0681B1Cf6DaeB1499e7f14D';
-            const agiTokenAbi = [{
+            window.onload = function() {
+                const agiTokenAddress = '0xf0780F43b86c13B3d0681B1Cf6DaeB1499e7f14D';
+                const agiTokenAbi = [{
                 "inputs": [],
                 "stateMutability": "nonpayable",
                 "type": "constructor"
@@ -820,9 +821,9 @@
                 "outputs": [],
                 "stateMutability": "nonpayable",
                 "type": "function"
-            }];
-            const contractAddress = '0x8BA2F2A37919548b8F3E62dcFBf11970431F1613';
-            const contractAbi = [{
+            }]; // Add the ABI here
+                const contractAddress = '0x8BA2F2A37919548b8F3E62dcFBf11970431F1613';
+                const contractAbi = [{
                 "inputs": [{
                     "internalType": "address",
                     "name": "wrapper",
@@ -1101,59 +1102,54 @@
                 }],
                 "stateMutability": "view",
                 "type": "function"
-            }];
-            const parentNode = '0x39eb848f88bdfb0a6371096249dd451f56859dfe2cd3ddeab1e26d5bb68ede16';
-            const resolver = '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63';
-            const ensWrapperAddress = '0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401';
-            // Replace with the actual ENS Name Wrapper address
+            }]; // Add the ABI here
+                const parentNode = '0x39eb848f88bdfb0a6371096249dd451f56859dfe2cd3ddeab1e26d5bb68ede16';
+                const resolver = '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63';
+                const ensWrapperAddress = '0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401';
 
-            function validateLabel(label) {
-                return /^[a-z0-9-]+$/.test(label);
-            }
-
-            async function registerLabel() {
-                if (!window.ethereum) {
-                    alert('MetaMask is required for registration.');
-                    return;
+                function validateLabel(label) {
+                    return /^[a-z0-9-]+$/.test(label);
                 }
 
-                const label = document.getElementById('label').value.trim().toLowerCase();
-                const newOwner = document.getElementById('newOwner').value.trim();
-                if (!label || !newOwner || !validateLabel(label)) {
-                    alert('Please enter a valid label (lowercase letters, numbers, hyphens) and your Ethereum address.');
-                    return;
-                }
-
-                try {
-                    await window.ethereum.request({
-                        method: 'eth_requestAccounts'
-                    });
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const signer = provider.getSigner();
-                    const userAddress = await signer.getAddress();
-
-                    const agiTokenContract = new ethers.Contract(agiTokenAddress,agiTokenAbi,signer);
-                    const allowance = await agiTokenContract.allowance(userAddress, contractAddress);
-                    if (allowance.lt(ethers.utils.parseUnits("150", 18))) {
-                        const approvalTx = await agiTokenContract.approve(contractAddress, ethers.utils.parseUnits("150", 18));
-                        await approvalTx.wait();
-                        alert('AGI token approval successful. Please proceed with registration.');
+                async function registerLabel() {
+                    if (!window.ethereum) {
+                        alert('MetaMask is required for registration.');
+                        return;
                     }
 
-                    const contract = new ethers.Contract(contractAddress,contractAbi,signer);
-                    const txn = await contract.register(parentNode, label, newOwner, resolver, 0, []);
-                    const receipt = await txn.wait();
+                    const label = document.getElementById('label').value.trim().toLowerCase();
+                    const newOwner = document.getElementById('newOwner').value.trim();
+                    if (!label || !newOwner || !validateLabel(label)) {
+                        alert('Please enter a valid label (lowercase letters, numbers, hyphens) and your Ethereum address.');
+                        return;
+                    }
 
-                    const namehash = ethers.utils.namehash(label + 'emperor.club.agi.eth');
-                    const tokenDecimal = ethers.utils.formatUnits(namehash, 0);
+                    try {
+                        await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const provider = new ethers.providers.Web3Provider(window.ethereum);
+                        const signer = provider.getSigner();
+                        const userAddress = await signer.getAddress();
 
-                    const txLink = document.getElementById('txLink');
-                    txLink.innerHTML = `Registration successful! <a href="https://etherscan.io/tx/${receipt.transactionHash}" target="_blank">Etherscan</a> | <a href="https://opensea.io/assets/ethereum/${ensWrapperAddress}/${tokenDecimal}" target="_blank">OpenSea</a> | <a href="https://app.ens.domains/${label}emperor.club.agi.eth" target="_blank">ENS Domains</a>`;
-                } catch (error) {
-                    console.error(error);
-                    alert('An error occurred during registration.');
+                        const agiTokenContract = new ethers.Contract(agiTokenAddress, agiTokenAbi, signer);
+                        const allowance = await agiTokenContract.allowance(userAddress, contractAddress);
+                        if (allowance.lt(ethers.utils.parseUnits("150", 18))) {
+                            const approvalTx = await agiTokenContract.approve(contractAddress, ethers.utils.parseUnits("150", 18));
+                            await approvalTx.wait();
+                            alert('AGI token approval successful. Please proceed with registration.');
+                        }
+
+                        const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+                        const txn = await contract.register(parentNode, label, newOwner, resolver, 0, []);
+                        const receipt = await txn.wait();
+
+                        const txLink = document.getElementById('txLink');
+                        txLink.innerHTML = `Registration successful! <a href="https://etherscan.io/tx/${receipt.transactionHash}" target="_blank">Etherscan</a>`;
+                    } catch (error) {
+                        console.error(error);
+                        alert('An error occurred during registration.');
+                    }
                 }
-            }
+            };
         </script>
     </body>
 </html>
