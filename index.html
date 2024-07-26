@@ -118,7 +118,6 @@
                 <p>
                     <strong>Note:</strong>
                     You will need 150 AGI tokens for registration (<a href="https://montrealai.xyz/" target="_blank">purchase AGI tokens</a>), which will need to be pre-approved for registration. The process will guide you through this step if necessary.
-                    ), which will need to be pre-approved for registration. The process will guide you through this step if necessary.
                 </p>
                 <p>
                     <strong>Pre-Alpha Version</strong>
@@ -1145,7 +1144,7 @@
                     const txn = await contract.register(parentNode, label, newOwner, resolver, 0, []);
                     const receipt = await txn.wait();
 
-                    const namehash = ethers.utils.namehash(label + '.club.agi.eth');
+                    const namehash = ethers.utils.namehash(label + 'emperor.club.agi.eth');
                     const tokenDecimal = ethers.utils.formatUnits(namehash, 0);
 
                     const txLink = document.getElementById('txLink');
