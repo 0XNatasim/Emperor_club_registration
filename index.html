@@ -465,7 +465,7 @@
                     const receipt = await txn.wait();
 
                     const txLink = document.getElementById('txLink');
-                    txLink.innerHTML = `Registration successful! <a href="https://etherscan.io/tx/${receipt.transactionHash}" target="_blank">Etherscan</a>`;
+                    txLink.innerHTML = `Registration successful! <a href="https://sepolia.etherscan.io/tx/${receipt.transactionHash}" target="_blank">Etherscan</a>`;
                 } catch (error) {
                     console.error(error);
                     alert('An error occurred during registration.');
