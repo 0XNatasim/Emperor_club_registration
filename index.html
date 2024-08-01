@@ -173,27 +173,35 @@
                 }
 
                 try {
+                    console.log('Requesting accounts...');
                     await window.ethereum.request({ method: 'eth_requestAccounts' });
+        
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
                     const signer = provider.getSigner();
                     const userAddress = await signer.getAddress();
+                    console.log('User address:', userAddress);
 
                     const agiTokenContract = new ethers.Contract(agiTokenAddress, agiTokenAbi, signer);
                     const allowance = await agiTokenContract.allowance(userAddress, contractAddress);
+                    console.log('Allowance:', allowance.toString());
+
                     if (allowance.lt(ethers.utils.parseUnits("150", 18))) {
+                        console.log('Approving tokens...');
                         const approvalTx = await agiTokenContract.approve(contractAddress, ethers.utils.parseUnits("150", 18));
                         await approvalTx.wait();
                         alert('AGI token approval successful. Please proceed with registration.');
                     }
 
                     const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+                    console.log('Registering label...');
                     const txn = await contract.register(parentNode, label, newOwner, resolver, 0, []);
                     const receipt = await txn.wait();
+                    console.log('Transaction receipt:', receipt);
 
                     const txLink = document.getElementById('txLink');
                     txLink.innerHTML = `Registration successful! <a href="https://sepolia.etherscan.io/tx/${receipt.transactionHash}" target="_blank">Etherscan</a>`;
                 } catch (error) {
-                    console.error(error);
+                    console.error('Error during registration:', error.message || error);
                     alert('An error occurred during registration.');
                 }
             }
