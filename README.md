@@ -1,3 +1,3 @@
-# Emperor_club_sundomain
+# Emperor_club_ENS
 
-https://0xnatasim.github.io/Emperor_club_sundomain/
+https://0xnatasim.github.io/Emperor_club_ENS/
